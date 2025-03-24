@@ -74,5 +74,77 @@ public class BITACORA_HISTORICA {
             temp.getSiguiente().setAnterior(temp);    
         }
     }
- 
+    public NodoCola desencolar(String nombre) {
+        if (this.frente == null) {
+            return null; // La lista está vacía.
+        }
+
+        NodoCola actual = this.frente;
+        NodoCola aux = null;
+
+        // Recorremos la lista circular
+        while (actual != null) {
+
+            if (actual.getDato().getNombreJugador().equals(nombre)) {
+                aux = actual;
+
+
+                if (actual == this.frente && actual == this.ultimo) {
+                    this.frente = null;
+                    this.ultimo = null;
+                }
+                else if (actual == this.frente) {
+                    this.frente = this.frente.getSiguiente();
+                    this.frente.setAnterior(this.ultimo);
+                    this.ultimo.setSiguiente(this.frente);
+                }
+
+                else if (actual == this.ultimo) {
+                    this.ultimo = this.ultimo.getAnterior();
+                    this.ultimo.setSiguiente(this.frente);
+                    this.frente.setAnterior(this.ultimo);
+                }
+                else {
+                    actual.getAnterior().setSiguiente(actual.getSiguiente());
+                    actual.getSiguiente().setAnterior(actual.getAnterior());
+                }
+
+                return aux; 
+            }
+
+            actual = actual.getSiguiente();
+
+           
+            if (actual == this.frente) {
+                break;
+            }
+        }
+
+        return null; // Si no se encontró el nodo con el nombre especificado
+    }
+    
+    public void imprimir() {
+        if (this.frente == null) {
+            System.out.println("La lista está vacía.");
+            return;
+        }
+
+        NodoCola actual = this.frente;
+        NodoCola fin = this.ultimo;
+
+        while (actual != null) {
+            System.out.println("Nombre: " + actual.getDato().getNombreJugador());
+            System.out.println("Posiciones:");
+            actual.getDato().getPosicion().recorrer();  // Llamar a recorrer para imprimir
+
+            // Si llegamos al final, rompemos el bucle
+            if (actual == fin) {
+                break;
+            }
+
+            // Avanzamos al siguiente nodo
+            actual = actual.getSiguiente();
+        }
+    }
+
 }
