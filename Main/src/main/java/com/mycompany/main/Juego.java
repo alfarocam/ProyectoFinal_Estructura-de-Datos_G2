@@ -19,7 +19,8 @@ public class Juego {
     private Premios Premios;
     private Castigos Castigos;
     private Random random; 
-    private int Jugador; 
+    private int Jugador;
+    private char permitirIngreso; // 'S' para si, 'N' para no 
     
     public Juego() {
         ColaDeJugadores = new ColaDeJugadores();
@@ -53,6 +54,9 @@ public class Juego {
         System.out.println("*                   Buena Suerte                    *");
         System.out.println("*                                                   *");
         System.out.println("*****************************************************");
+        System.out.println();
+        System.out.println("Desea permitir ingreso de mas jugadores durante el juego? (S/N):  ");
+        permitirIngreso = scanner.next().toUpperCase().charAt(0); // Guardar el valor
         boolean jugando = true;
 
         while (jugando) {
@@ -280,6 +284,7 @@ private void jugar() {
                 System.out.println("6. Mostrar Premios restantes");
                 System.out.println("7. Mostrar Castigos restantes");
                 System.out.println("8. Terminar Juego");
+                System.out.println("9. Agregar nuevo jugador durante el juego");
                 int opcion = scanner.nextInt();
 
                 switch (opcion) {
@@ -382,6 +387,32 @@ private void jugar() {
                          juegoActivo = false; 
                          Menu = "pp";  // O cualquier otro valor según tu lógica
                          break;
+                    /**
+                    * Agrega un nuevo jugador a la cola durante el juego, si la configuración lo permite.
+                    * Verifica que el jugador no exista previamente en la cola.
+                    * Inserta su historial inicial en la bitácora histórica.
+                    * Si no se permite el ingreso de nuevos jugadores, muestra un mensaje de error.
+                    * 
+                    * @author Kevin
+                    */     
+                    case 9:
+                        if (permitirIngreso == 'S') {
+                        System.out.print("Ingrese el nombre del nuevo jugador: ");
+                        String nuevoJugador = scanner.next();
+
+                        if (ColaDeJugadores.buscarJugador(nuevoJugador) != null) {
+                            System.out.println("El jugador ya existe.");
+                        } else {
+                            ListaEnlazada miListaEnlazada = new ListaEnlazada();
+                            ColaDeJugadores.encolar(nuevoJugador, 0);
+                            miListaEnlazada.insertaOrdenado(0);
+                            BITACORA_HISTORICA.insertar(nuevoJugador, miListaEnlazada);
+                            System.out.println("Jugador agregado exitosamente.");
+                        }
+                    } else {
+                        System.out.println("¡ERROR! La configuración de este juego no permite ingresar más jugadores, deberá esperar a que inicie uno nuevo.");
+                    }
+                    break;
                 }
             }
         }
