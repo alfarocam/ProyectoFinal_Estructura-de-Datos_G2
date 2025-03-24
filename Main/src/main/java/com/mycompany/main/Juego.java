@@ -101,16 +101,28 @@ public class Juego {
                 }
                 break; 
                 case 2:
-                    System.out.print("Ingrese el nombre del jugador a eliminar: ");
-                    String jugadorEliminado = scanner.next();
+                    System.out.print("Ingrese el nombre del jugador: ");  
+                    String eliminado = scanner.next();
+                        boolean existente = false; 
 
-                    NodoCola eliminado = ColaDeJugadores.desencolar(jugadorEliminado);
+                        NodoCola actuall = ColaDeJugadores.getFrente();
+                            while (actuall != null) {
+                                if (actuall.getDato().getNombreJugador().equals(eliminado)) {
+                                    existente = true;
+                                    break; 
+                                }
+                                actuall = actuall.getSiguiente();
+                            }
 
-                    if (eliminado != null) {
-                        System.out.println("Se ha eliminado a " + eliminado.getDato().getNombreJugador());
-                    } else {
-                        System.out.println("Jugador no encontrado en la cola.");
-                    }
+                        if (existente) {
+                            BITACORA_HISTORICA.desencolar(eliminado);
+                            ColaDeJugadores.desencolar(eliminado);
+                            System.out.println("Se ha eliminado a " + eliminado);
+                            BITACORA_HISTORICA.imprimir();
+                        } else {
+                            System.out.println("el Jugador no xsite");
+ 
+                        }
                 break;
                 case 3:
                     ColaDeJugadores.ImprimirParticipantes();
@@ -258,24 +270,22 @@ private void jugar() {
                 
                 
                 while (!Menu.equals("pp")) {
+                NodoCola actual = ColaDeJugadores.getFrente();
                 System.out.println("\nSeleccione una opcion:");
                 System.out.println("1. Pasar turno");
                 System.out.println("2. Historial de jugadas");
-                System.out.println("3. Ver Posiciones de los demas jugadores");
-                System.out.println("4. Salirse del juego Jugador:" + ColaDeJugadores.getFrente().getDato().getNombreJugador());
-                System.out.println("5. Mostrar Premios restantes");
-                System.out.println("6. Mostrar Castigos restantes");
-                System.out.println("7. Terminar Juego");
+                System.out.println("3. Agregar Jugador");
+                System.out.println("4. Estado Actual del Juego");
+                System.out.println("5. Salirse del juego Jugador:" + ColaDeJugadores.getFrente().getDato().getNombreJugador());
+                System.out.println("6. Mostrar Premios restantes");
+                System.out.println("7. Mostrar Castigos restantes");
+                System.out.println("8. Terminar Juego");
                 int opcion = scanner.nextInt();
 
                 switch (opcion) {
                     case 1:
-                       
-
-                 
                         ColaDeJugadores.moverJugadorAlFinal();
 
-                    
                         if (BITACORA_HISTORICA.getCabeza().getDato() != ColaDeJugadores.getFrente().getDato()) {
                             BITACORA_HISTORICA.setCabeza(BITACORA_HISTORICA.getCabeza().getSiguiente());
                         }
@@ -305,36 +315,65 @@ private void jugar() {
                         }
     
                                 
-                                           
-                        break;
                     case 3:
+                         System.out.print("Ingrese el nombre del jugador: ");
+                        String nombre = scanner.next();
+
+                        boolean existe = false; 
+
+
+                            while (actual != null) {
+                                if (actual.getDato().getNombreJugador().equals(nombre)) {
+                                    System.out.println("El jugador ya existe");
+                                    existe = true;
+                                    break; 
+                                }
+                                actual = actual.getSiguiente();
+                            }
+
+                        if (existe) {
+                            System.out.println("Este jugador ya existe.");
+                        } else {
+                            ListaEnlazada miListaEnlazada = new ListaEnlazada();
+
+                            ColaDeJugadores.encolar(nombre, Jugador);
+                            miListaEnlazada.insertaOrdenado(Jugador);
+                            BITACORA_HISTORICA.insertar(nombre, miListaEnlazada);
+                            BITACORA_HISTORICA.getUltimo().getAnterior().getDato().getPosicion().recorrer();    
+
+                            }  
+                        
+                        break;                   
+                    case 4:
                         ColaDeJugadores.ImprimirParticipantes();  
                         
                         break;
-                    case 4:
-
-                        NodoCola eliminado = ColaDeJugadores.desencolar(ColaDeJugadores.getFrente().getDato().getNombreJugador());
+                    case 5:
+                        
+                        String eliminado = ColaDeJugadores.getFrente().getDato().getNombreJugador();
+                        
                         if (eliminado != null) {
-                            System.out.println("Se ha eliminado a " + eliminado.getDato().getNombreJugador());
+                            BITACORA_HISTORICA.desencolar(ColaDeJugadores.getFrente().getDato().getNombreJugador());
+                            ColaDeJugadores.desencolar(ColaDeJugadores.getFrente().getDato().getNombreJugador());
+                            System.out.println("Se ha eliminado a " + eliminado);
+                            BITACORA_HISTORICA.imprimir();
                             Menu = "pp";
                         } else {
                             System.out.println("Jugador no encontrado en la cola.");
                             Menu = "pp";
                         }
                         break;
-                    case 5:
+                    case 6:
                         Premios.imprimirPila(); 
                        
                         break;
-                    case 6: 
+                    case 7: 
                         Castigos.imprimirPila();
                         
                         break; 
-                    case 7:
+                    case 8:
                         System.out.println("Juego finalizado, los jugadores quedaron:");
                         ColaDeJugadores.ImprimirParticipantes();
-                        NodoCola actual = ColaDeJugadores.getFrente();
-                        
 
                          while (actual != null) {
                              actual.getDato().setPosicionActual(0);
