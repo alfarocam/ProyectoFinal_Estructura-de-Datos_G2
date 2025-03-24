@@ -7,21 +7,34 @@ package com.mycompany.main;
 import java.util.Scanner;
 import java.util.Random;
 
+
 /**
+ * Esta clase es la parte "visual" y en dónde se toman la decisiones y ajustes
+ * de cómo será la partida del juego. Siendo este el juego, se permite agregar y
+ * eliminar jugadores, tirar dados, y llevar un historial de las posiciones,
+ * premios y castigos de cada jugador.
  *
- * @author josep
+ * @author CamilaAlfaro 3/23/2025
  * @author Kevin 3/1/2025
- * @author CamilaAlfaro 3/2/2025
+ * @author josep
  */
 public class Juego {
+
     private ColaDeJugadores ColaDeJugadores;
     private BITACORA_HISTORICA BITACORA_HISTORICA;
     private Premios Premios;
     private Castigos Castigos;
-    private Random random; 
+    private Random random;
     private int Jugador;
-    private char permitirIngreso; // 'S' para si, 'N' para no 
-    
+    // char S para sí, N para no
+    private char permitirIngreso;
+    //posicionMaxima guarda el límite del laberinto, es decir en dónde decide el usuario que termine la partida
+    private int posicionMaxima;
+
+    /**
+     * Constructor de la clase Juego Aquí se inicializa todo lo necesario para
+     * que el juego funcione de manera correcta
+     */
     public Juego() {
         ColaDeJugadores = new ColaDeJugadores();
         BITACORA_HISTORICA = new BITACORA_HISTORICA();
@@ -29,22 +42,39 @@ public class Juego {
         Castigos = new Castigos();
         random = new Random();
         this.Jugador = 0;
-        
+        // Esta posicion máxima es predetermina pero puede ser cambiado por el usuario
+        this.posicionMaxima = 10;
     }
 
+    /**
+     * Adquiere el ID del jugador actual
+     *
+     * @return el ID del jugador actual
+     */
     public int getJugador() {
         return Jugador;
     }
 
+    /**
+     * Fija o estblede el ID del jugador actual
+     *
+     * @param Jugador el ID del jugador
+     */
     public void setJugador(int Jugador) {
         this.Jugador = Jugador;
     }
 
+    /**
+     * Método que da inicio al juego y tiene la interacción con el usuario segun
+     * sus request Permite agregar jugadores, eliminar jugadores entre otras
+     * acciones en relación con la partida
+     */
     public void iniciarJuego() {
-        
         Premios.agregaPremio();
         Castigos.agregarCastigo();
         Scanner scanner = new Scanner(System.in);
+
+        //Print de bienvenida
         System.out.println("*****************************************************");
         System.out.println("*                                                   *");
         System.out.println("*              Bienvenidos al Juego de              *");
@@ -55,10 +85,17 @@ public class Juego {
         System.out.println("*                                                   *");
         System.out.println("*****************************************************");
         System.out.println();
+
+        //Se le pregunta al usuario y se establce el límite o la posicion maxima del laberinto que gusta
+        System.out.print("Ingrese la posicion maxima del laberinto (La meta **NUMERO**): ");
+        this.posicionMaxima = scanner.nextInt();
+
+        //Se le pregunta al usuario si se permite agregar jugadores durante el juego
         System.out.println("Desea permitir ingreso de mas jugadores durante el juego? (S/N):  ");
         permitirIngreso = scanner.next().toUpperCase().charAt(0); // Guardar el valor
         boolean jugando = true;
 
+        //Menú principal 
         while (jugando) {
             System.out.println("\nSeleccione una opcion:");
             System.out.println("1. Agregar jugador");
@@ -67,7 +104,7 @@ public class Juego {
             System.out.println("4. Jugar");
             System.out.println("5. Salirse del juego");
             System.out.println("6. Mostrar posiciones");
-            System.out.println("7. Cambiar turno"); 
+            System.out.println("7. Cambiar turno");
             System.out.println("8. Mostrar Pila de Premios");
             System.out.println("9. Mostrar Pila de Castigos");
             System.out.println("10. Ayuda");
@@ -76,58 +113,11 @@ public class Juego {
 
             switch (opcion) {
                 case 1:
-                System.out.print("Ingrese el nombre del jugador: ");
-                String nombre = scanner.next();
-
-                NodoCola actual = ColaDeJugadores.getFrente();
-                boolean existe = false; 
-
-              
-                while (actual != null) {
-                    if (actual.getDato().getNombreJugador().equals(nombre)) {
-                        System.out.println("El jugador ya existe");
-                        existe = true;
-                        break; 
-                    }
-                    actual = actual.getSiguiente();
-                }
-
-                if (existe) {
-                    System.out.println("Este jugador ya existe.");
-                } else {
-                    ListaEnlazada miListaEnlazada = new ListaEnlazada();
-                    
-                    ColaDeJugadores.encolar(nombre, Jugador);
-                    miListaEnlazada.insertaOrdenado(Jugador);
-                    BITACORA_HISTORICA.insertar(nombre, miListaEnlazada);
-                    BITACORA_HISTORICA.getUltimo().getAnterior().getDato().getPosicion().recorrer();    
-                    
-                }
-                break; 
+                    agregarJugador(scanner);
+                    break;
                 case 2:
-                    System.out.print("Ingrese el nombre del jugador: ");  
-                    String eliminado = scanner.next();
-                        boolean existente = false; 
-
-                        NodoCola actuall = ColaDeJugadores.getFrente();
-                            while (actuall != null) {
-                                if (actuall.getDato().getNombreJugador().equals(eliminado)) {
-                                    existente = true;
-                                    break; 
-                                }
-                                actuall = actuall.getSiguiente();
-                            }
-
-                        if (existente) {
-                            BITACORA_HISTORICA.desencolar(eliminado);
-                            ColaDeJugadores.desencolar(eliminado);
-                            System.out.println("Se ha eliminado a " + eliminado);
-                            BITACORA_HISTORICA.imprimir();
-                        } else {
-                            System.out.println("el Jugador no xsite");
- 
-                        }
-                break;
+                    eliminarJugador(scanner);
+                    break;
                 case 3:
                     ColaDeJugadores.ImprimirParticipantes();
                     break;
@@ -137,18 +127,22 @@ public class Juego {
                 case 5:
                     System.out.print("Ingrese el ID del jugador que desea salir: ");
                     int idSalir = scanner.nextInt();
-                    /**colaDeJugadores.salirDelJuego(idSalir);**/
+                    /**
+                     * colaDeJugadores.salirDelJuego(idSalir);*
+                     */
                     break;
                 case 6:
-                    ColaDeJugadores.mostrarPosiciones(); 
+                    ColaDeJugadores.mostrarPosiciones();
                     break;
                 case 7:
-                    /**colaDeJugadores.cambiarTurno(); **/
+                    /**
+                     * colaDeJugadores.cambiarTurno(); *
+                     */
                     break;
                 case 8:
-                    Premios.imprimirPila(); 
+                    Premios.imprimirPila();
                     break;
-                case 9: 
+                case 9:
                     Castigos.imprimirPila();
                     break;
                 case 10:
@@ -160,6 +154,7 @@ public class Juego {
                     break;
                 case 12:
                     System.out.println(Premios.sacarPremio());
+                    break;
                 default:
                     System.out.println("Opcion no valida");
             }
@@ -167,9 +162,11 @@ public class Juego {
 
         scanner.close();
     }
-/**
-* imprime la informacio de ayuda del juego, la versión y los desarrolladores.
-*/
+
+    /**
+     * Método que muestra la ayuda del juego Print información sobre la versión
+     * del juego y los desarrolladores
+     */
     private void mostrarAyuda() {
         System.out.println("*****************************************************");
         System.out.println("*                   Ayuda del Juego                 *");
@@ -183,247 +180,143 @@ public class Juego {
         System.out.println("*               - Jose Pablo Murillo Villamil       *");
         System.out.println("*****************************************************");
     }
-    
-    
-/**
- * 
- * Este metodo es el que se encarga de todas las "reglas", es decir tirar los dados, realizar la suma y 
- * en base a eso aplicar ya sea las intrucciones de premios o castigos; también lleva el control de turnos y posiciones por jugador
- * 
- * si la suma es par el jugador recibe un premio de la pila de premios
- * si la suma es impar el jugador recibe un castigo de la pila de castigos
- * 
- *
-* */
 
-        
-private void jugar() {
-    Scanner scanner = new Scanner(System.in);
-    
-        System.out.println("!!!!!Inicia el Juego!!!!!!!");
+    /**
+     * Este método contiene y lleva el control de la lógica del juego, que
+     * involucra tirar dados, determinar si el jugador avanza o retrocede, y
+     * aplicar premios o castigos todo en torno a los dados
+     *
+     */
+    private void jugar() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println(" !!!!! Inicia el Juego !!!!!!! ");
         System.out.println("Participantes");
         ColaDeJugadores.ImprimirParticipantes();
         boolean juegoActivo = true;
 
-        while (ColaDeJugadores.getFrente().getDato().getPosicionActual() < 30 && juegoActivo) {  // Cambié la condición para continuar hasta alcanzar o superar la posición 30
+        //cliclos que guardan la lógica del juego antes o mientras que ningun jugador haya "ganado" es decir alcanzado la posicion maxima
+        while (ColaDeJugadores.getFrente().getDato().getPosicionActual() < posicionMaxima && juegoActivo) {
             String Menu = "pe";
-            DatosJugadores JugadorActual = ColaDeJugadores.getFrente().getDato();  
+            DatosJugadores JugadorActual = ColaDeJugadores.getFrente().getDato();
             String Turno = BITACORA_HISTORICA.getCabeza().getDato().getNombreJugador();
             int Posicion = JugadorActual.getPosicionActual();
-            
-            
-            System.out.println("Es el turno de: " + Turno + " Se encuentra en posición " + Posicion);
 
-            System.out.print("Listo para tirar los dados?(Y/N): ");
+            System.out.println("Es el turno de: " + Turno + " Se encuentra en posicion " + Posicion);
+
+            System.out.print("Listo para tirar los dados?(S/N): ");
             String respuesta = scanner.nextLine();
-            if (respuesta.equals("Y")){
-                System.out.println("¡Tira los dados!");
-                int dado1 = random.nextInt(6) + 1; 
-                int dado2 = random.nextInt(6) + 1; 
+            if (respuesta.equals("S")) {
+                System.out.println("Tira los dados!");
+                int dado1 = random.nextInt(6) + 1;
+                int dado2 = random.nextInt(6) + 1;
                 int sumaDados = dado1 + dado2;
 
-                System.out.println("Tu dado 1 quedó en: " + dado1 + ", tu dado 2 quedó en " + dado2 + ". En total tienes: " + sumaDados);
+                System.out.println("Tu dado 1 quedo en: " + dado1 + ", tu dado 2 quedo en " + dado2 + ". En total tienes: " + sumaDados);
 
                 if (sumaDados % 2 == 0) {
-                    System.out.println("!!!!FELICIDADES!!!!!");
-                    System.out.println("Obtuviste un número par, debes tomar un premio de la pila. Mucha Suerte");
+                    System.out.println(" !!!! FELICIDADES !!!!! ");
+                    System.out.println("Obtuviste un numero par, debes tomar un premio de la pila. Mucha Suerte");
                     DatosPremios premio = Premios.despilar();
                     System.out.println(premio.getPremio());
                     JugadorActual.setPosicionActual(JugadorActual.getPosicionActual() + premio.getPosicionesMas());
                     System.out.println(JugadorActual.getPosicionActual());
-                    System.out.println("Jugador " + Turno + " estas en la posición " + Posicion + ", puedes avanzar " + premio.getPosicionesMas() + " posiciones en la carrera. Ahora su nueva posición es " + JugadorActual.getPosicionActual());
-                    System.out.println("Tu posición actual es: " + JugadorActual.getPosicionActual());
-                    /**                           **/
-                        BITACORA_HISTORICA.getCabeza().getDato().getPosicion().insertaOrdenado(JugadorActual.getPosicionActual());
-                        System.out.println(BITACORA_HISTORICA.getCabeza().getDato().getNombreJugador());
-                        BITACORA_HISTORICA.getCabeza().getDato().getPosicion().recorrer();
+                    System.out.println("Jugador " + Turno + " estas en la posicion " + Posicion + ", puedes avanzar " + premio.getPosicionesMas() + " posiciones en la carrera. Ahora su nueva posición es " + JugadorActual.getPosicionActual());
+                    System.out.println("Tu posicion actual es: " + JugadorActual.getPosicionActual());
 
-                        
-                    
-                    
+                    BITACORA_HISTORICA.getCabeza().getDato().getPosicion().insertaOrdenado(JugadorActual.getPosicionActual());
+                    System.out.println(BITACORA_HISTORICA.getCabeza().getDato().getNombreJugador());
+                    BITACORA_HISTORICA.getCabeza().getDato().getPosicion().recorrer();
                 } else {
-                    System.out.println("!!!!Mala Suerte!!!!!");
-                    System.out.println("Obtuviste un número impar, debes tomar un castigo de la pila. Mejor suerte la próxima vez");
+                    System.out.println(" MALA SUERTE :C ");
+                    System.out.println("Obtuviste un numero impar, debes tomar un castigo de la pila. Mejor suerte la proxima vez");
 
                     if (JugadorActual.getPosicionActual() == 0) {
                         System.out.println("No tienes puntos para restar, puntos eliminados = 0");
-                        System.out.println("Jugador " + Turno + " estas en la posición " + Posicion + ", puedes avanzar 0 posiciones en la carrera. Ahora su nueva posición es " + JugadorActual.getPosicionActual());
-                        System.out.println("Tu posición actual es: " + JugadorActual.getPosicionActual());
-                        /**                           **/
+                        System.out.println("Jugador " + Turno + " estas en la posicion " + Posicion + ", puedes avanzar 0 posiciones en la carrera. Ahora su nueva posicion es " + JugadorActual.getPosicionActual());
+                        System.out.println("Tu posicion actual es: " + JugadorActual.getPosicionActual());
                         BITACORA_HISTORICA.getCabeza().getDato().getPosicion().insertaOrdenado(JugadorActual.getPosicionActual());
                         System.out.println(BITACORA_HISTORICA.getCabeza().getDato().getNombreJugador());
                         BITACORA_HISTORICA.getCabeza().getDato().getPosicion().recorrer();
-                        
-
-
                     } else {
                         DatosCastigos castigo = Castigos.despilar();
                         System.out.println(castigo.getCastigo());
                         JugadorActual.setPosicionActual(JugadorActual.getPosicionActual() - castigo.getPosicionesMenos());
                         System.out.println(JugadorActual.getPosicionActual());
-                        System.out.println("Jugador" + Turno + "estas en la posición" + Posicion + ", puedes avanzar" + castigo.getPosicionesMenos() + "posiciones en la carrera. Ahora su nueva posición es " + JugadorActual.getPosicionActual());
-                        System.out.println("Tu posición actual es: " + JugadorActual.getPosicionActual());
-                        /**                           **/
+                        System.out.println("Jugador" + Turno + " estas en la posicion" + Posicion + ", puedes avanzar" + castigo.getPosicionesMenos() + "posiciones en la carrera. Ahora su nueva posicion es " + JugadorActual.getPosicionActual());
+                        System.out.println("Tu posicion actual es: " + JugadorActual.getPosicionActual());
                         BITACORA_HISTORICA.getCabeza().getDato().getPosicion().insertaOrdenado(JugadorActual.getPosicionActual());
                         System.out.println(BITACORA_HISTORICA.getCabeza().getDato().getNombreJugador());
                         BITACORA_HISTORICA.getCabeza().getDato().getPosicion().recorrer();
-                        
-                        
                     }
                 }
-                
-                
-                while (!Menu.equals("pp")) {
-                NodoCola actual = ColaDeJugadores.getFrente();
-                System.out.println("\nSeleccione una opcion:");
-                System.out.println("1. Pasar turno");
-                System.out.println("2. Historial de jugadas");
-                System.out.println("3. Agregar Jugador");
-                System.out.println("4. Estado Actual del Juego");
-                System.out.println("5. Salirse del juego Jugador:" + ColaDeJugadores.getFrente().getDato().getNombreJugador());
-                System.out.println("6. Mostrar Premios restantes");
-                System.out.println("7. Mostrar Castigos restantes");
-                System.out.println("8. Terminar Juego");
-                System.out.println("9. Agregar nuevo jugador durante el juego");
-                int opcion = scanner.nextInt();
+            }
 
-                switch (opcion) {
-                    case 1:
-                        ColaDeJugadores.moverJugadorAlFinal();
-
-                        if (BITACORA_HISTORICA.getCabeza().getDato() != ColaDeJugadores.getFrente().getDato()) {
-                            BITACORA_HISTORICA.setCabeza(BITACORA_HISTORICA.getCabeza().getSiguiente());
-                        }
-
-                       
-
-                        Menu = "pp";
-                        break;
-                    case 2:
-                        boolean jugador = true;
-                        NodoCola historialActual = BITACORA_HISTORICA.getCabeza(); 
-
-                        while (jugador) {
-                            System.out.println(historialActual.getDato().getNombreJugador());
-                            historialActual.getDato().getPosicion().recorrer();
-
-                            System.out.print("Exit, siguiente <> anterior: ");
-                            String opciones = scanner.next();
-
-                            if (opciones.equals("siguiente")) {
-                                historialActual = historialActual.getSiguiente(); 
-                            } else if (opciones.equals("anterior")) {
-                                historialActual = historialActual.getAnterior(); 
-                            } else {
-                                break;
-                            }
-                        }
-    
-                                
-                    case 3:
-                         System.out.print("Ingrese el nombre del jugador: ");
-                        String nombre = scanner.next();
-
-                        boolean existe = false; 
-
-
-                            while (actual != null) {
-                                if (actual.getDato().getNombreJugador().equals(nombre)) {
-                                    System.out.println("El jugador ya existe");
-                                    existe = true;
-                                    break; 
-                                }
-                                actual = actual.getSiguiente();
-                            }
-
-                        if (existe) {
-                            System.out.println("Este jugador ya existe.");
-                        } else {
-                            ListaEnlazada miListaEnlazada = new ListaEnlazada();
-
-                            ColaDeJugadores.encolar(nombre, Jugador);
-                            miListaEnlazada.insertaOrdenado(Jugador);
-                            BITACORA_HISTORICA.insertar(nombre, miListaEnlazada);
-                            BITACORA_HISTORICA.getUltimo().getAnterior().getDato().getPosicion().recorrer();    
-
-                            }  
-                        
-                        break;                   
-                    case 4:
-                        ColaDeJugadores.ImprimirParticipantes();  
-                        
-                        break;
-                    case 5:
-                        
-                        String eliminado = ColaDeJugadores.getFrente().getDato().getNombreJugador();
-                        
-                        if (eliminado != null) {
-                            BITACORA_HISTORICA.desencolar(ColaDeJugadores.getFrente().getDato().getNombreJugador());
-                            ColaDeJugadores.desencolar(ColaDeJugadores.getFrente().getDato().getNombreJugador());
-                            System.out.println("Se ha eliminado a " + eliminado);
-                            BITACORA_HISTORICA.imprimir();
-                            Menu = "pp";
-                        } else {
-                            System.out.println("Jugador no encontrado en la cola.");
-                            Menu = "pp";
-                        }
-                        break;
-                    case 6:
-                        Premios.imprimirPila(); 
-                       
-                        break;
-                    case 7: 
-                        Castigos.imprimirPila();
-                        
-                        break; 
-                    case 8:
-                        System.out.println("Juego finalizado, los jugadores quedaron:");
-                        ColaDeJugadores.ImprimirParticipantes();
-
-                         while (actual != null) {
-                             actual.getDato().setPosicionActual(0);
-                             actual = actual.getSiguiente();
-                         }
-                         juegoActivo = false; 
-                         Menu = "pp";  // O cualquier otro valor según tu lógica
-                         break;
-                    /**
-                    * Agrega un nuevo jugador a la cola durante el juego, si la configuración lo permite.
-                    * Verifica que el jugador no exista previamente en la cola.
-                    * Inserta su historial inicial en la bitácora histórica.
-                    * Si no se permite el ingreso de nuevos jugadores, muestra un mensaje de error.
-                    * 
-                    * @author Kevin
-                    */     
-                    case 9:
-                        if (permitirIngreso == 'S') {
-                        System.out.print("Ingrese el nombre del nuevo jugador: ");
-                        String nuevoJugador = scanner.next();
-
-                        if (ColaDeJugadores.buscarJugador(nuevoJugador) != null) {
-                            System.out.println("El jugador ya existe.");
-                        } else {
-                            ListaEnlazada miListaEnlazada = new ListaEnlazada();
-                            ColaDeJugadores.encolar(nuevoJugador, 0);
-                            miListaEnlazada.insertaOrdenado(0);
-                            BITACORA_HISTORICA.insertar(nuevoJugador, miListaEnlazada);
-                            System.out.println("Jugador agregado exitosamente.");
-                        }
-                    } else {
-                        System.out.println("¡ERROR! La configuración de este juego no permite ingresar más jugadores, deberá esperar a que inicie uno nuevo.");
-                    }
-                    break;
-                }
+            // Verificar si el jugador ha llegado al final del laberinto (posición máxima)
+            if (JugadorActual.getPosicionActual() >= posicionMaxima) {
+                System.out.println("Felicidades! El jugador " + JugadorActual.getNombreJugador() + " ha llegado al final del laberinto");
+                break;
             }
         }
     }
-    if(ColaDeJugadores.getFrente().getDato().getPosicionActual() >= 30){    
-    System.out.println("¡El juego ha terminado! El jugador " + ColaDeJugadores.getFrente().getDato().getNombreJugador() + " ha ganado.");
+
+    /**
+     * Método para agregar un jugador al inicio del juego
+     *
+     * @param scanner scanner para leer lo ingresado por el usuario
+     */
+    private void agregarJugador(Scanner scanner) {
+        System.out.print("Ingrese el nombre del jugador: ");
+        String nombre = scanner.next();
+        NodoCola actual = ColaDeJugadores.getFrente();
+        boolean existe = false;
+
+        while (actual != null) {
+            if (actual.getDato().getNombreJugador().equals(nombre)) {
+                System.out.println("El jugador ya existe");
+                existe = true;
+                break;
+            }
+            actual = actual.getSiguiente();
+        }
+
+        if (existe) {
+            System.out.println("Este jugador ya existe");
+        } else {
+            ListaEnlazada miListaEnlazada = new ListaEnlazada();
+            ColaDeJugadores.encolar(nombre, Jugador);
+            miListaEnlazada.insertaOrdenado(Jugador);
+            BITACORA_HISTORICA.insertar(nombre, miListaEnlazada);
+            BITACORA_HISTORICA.getUltimo().getAnterior().getDato().getPosicion().recorrer();
+        }
     }
-    else{
-    System.out.println("Fin del juego");
+
+    /**
+     * Método para eliminar un jugador del juego
+     *
+     * @param scanner scanner para leer lo ingresado por el usuario
+     */
+    private void eliminarJugador(Scanner scanner) {
+        System.out.print("Ingrese el nombre del jugador: ");
+        String eliminado = scanner.next();
+        boolean existente = false;
+
+        NodoCola actuall = ColaDeJugadores.getFrente();
+        while (actuall != null) {
+            if (actuall.getDato().getNombreJugador().equals(eliminado)) {
+                existente = true;
+                break;
+            }
+            actuall = actuall.getSiguiente();
+        }
+
+        if (existente) {
+            BITACORA_HISTORICA.desencolar(eliminado);
+            ColaDeJugadores.desencolar(eliminado);
+            System.out.println("Se ha eliminado a " + eliminado);
+            BITACORA_HISTORICA.imprimir();
+        } else {
+            System.out.println("El Jugador no existe");
+        }
     }
-    }
-}  
-    
-   
+}
