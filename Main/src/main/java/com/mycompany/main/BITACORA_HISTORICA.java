@@ -147,6 +147,5 @@ public class BITACORA_HISTORICA {
         }
     }
     /** hola como estamos**/
-    /**hola como estamos2.0**/
 
 }
