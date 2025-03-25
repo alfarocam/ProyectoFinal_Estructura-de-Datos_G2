@@ -146,5 +146,6 @@ public class BITACORA_HISTORICA {
             actual = actual.getSiguiente();
         }
     }
+    /** hola como estamos**/
 
 }
