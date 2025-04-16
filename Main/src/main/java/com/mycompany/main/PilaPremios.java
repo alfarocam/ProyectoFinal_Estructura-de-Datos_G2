@@ -26,7 +26,14 @@ public class PilaPremios {
  
     }
 
-    
+    /**
+   * Con este Metodo apilamos los castigos
+   * @author Ian Villalobos Alvarez                   
+   * @param Numero nuemro de premio 
+   * @param castigo que tipo de premio
+   * @param PosicionesMenos cantida de posiciones mas
+   * @return No retorna nada
+   */
     public void apilar(String Numero, String premio, int PosicionesMas) {
 
     DatosPremios miDato = new DatosPremios(Numero, premio, PosicionesMas);
@@ -39,26 +46,38 @@ public class PilaPremios {
         top = miNodo; 
     }
 }
-
-public DatosPremios despilar(){
-    if (esVacia()){
-        System.out.println("Error: la pila está vacía, no se puede desapilar.");
-        return null;
-    } else {
-        DatosPremios valorTemp = top.getMiDatoPremio();
-        top = top.getAbajo();
-        return valorTemp;
+    /**
+   * Con este Metodo sacamos los premios
+   * @author Ian Villalobos Alvarez                   
+   * @return el premios sacado
+   */
+    public DatosPremios despilar(){
+        if (esVacia()){
+            System.out.println("Error: la pila está vacía, no se puede desapilar.");
+            return null;
+        } else {
+            DatosPremios valorTemp = top.getMiDatoPremio();
+            top = top.getAbajo();
+            return valorTemp;
+        }
     }
-}
 
-
+    /**
+   * Con este Metodo indica si esta vacia
+   * @author Ian Villalobos Alvarez                   
+   * @return No retorna nada
+   */
     public boolean esVacia(){
         if (top == null)
             return true; 
         else
             return false;
         }
-
+    /**
+   * Con este Metodo imprime la pila 
+   * @author Ian Villalobos Alvarez                   
+   * @return No retorna nada
+   */
     public void imprimirPila(){
         if (esVacia()){
         System.out.println("La pila esta vacia");

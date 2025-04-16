@@ -9,15 +9,20 @@ package com.mycompany.main;
  * @author VILLALV
  */
 public class Nodo {
-    
-    private int dato;  // número almacenado en cada nodo de la lista.
-    private Nodo siguiente;  // Referencia al sgte Nodo.
+    private int dato;  
+    private Nodo siguiente; 
+    private String descripcion;
+    private int orden;
 
     public Nodo(int dato) {
         this.dato = dato;
         this.siguiente = null;    
     }
 
+    public Nodo(int orden, String descripcion){
+        this.orden = orden;
+        this.descripcion = descripcion;
+    }
 
     public int getDato() {
         return dato;
@@ -34,4 +39,21 @@ public class Nodo {
     public void setSiguiente(Nodo siguiente) {
         this.siguiente = siguiente;
     }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public int getOrden() {
+        return orden;
+    }
+
+    public void setOrden(int orden) {
+        this.orden = orden;
+    }
+
 }

@@ -25,7 +25,14 @@ public class PilaCastigos{
  
     }
 
-    
+    /**
+   * Con este Metodo apilamos los castigos
+   * @author Ian Villalobos Alvarez                   
+   * @param Numero nuemro de castigo 
+   * @param castigo que tipo de castigo
+   * @param PosicionesMenos cantida de posiciones restadas
+   * @return No retorna nada
+   */
     public void apilar(String Numero, String castigo, int PosicionesMenos) {
 
     DatosCastigos miDato = new DatosCastigos(Numero, castigo, PosicionesMenos);
@@ -38,26 +45,38 @@ public class PilaCastigos{
         top = miNodo; 
     }
 }
-
-public DatosCastigos despilar(){
-    if (esVacia()){
-        System.out.println("Error: la pila está vacía, no se puede desapilar.");
-        return null;
-    } else {
-        DatosCastigos valorTemp = top.getMiDatoCastigo();
-        top = top.getAbajo();
-        return valorTemp;
+    /**
+   * Con este Metodo sacamos los castigos
+   * @author Ian Villalobos Alvarez                   
+   * @return el castigo sacado
+   */
+    public DatosCastigos despilar(){
+        if (esVacia()){
+            System.out.println("Error: la pila está vacía, no se puede desapilar.");
+            return null;
+        } else {
+            DatosCastigos valorTemp = top.getMiDatoCastigo();
+            top = top.getAbajo();
+            return valorTemp;
+        }
     }
-}
 
-
+    /**
+   * Con este Metodo indica si esta vacia
+   * @author Ian Villalobos Alvarez                   
+   * @return No retorna nada
+   */
     public boolean esVacia(){
         if (top == null)
             return true; 
         else
             return false;
         }
-
+    /**
+   * Con este Metodo imprime la pila 
+   * @author Ian Villalobos Alvarez                   
+   * @return No retorna nada
+   */
     public void imprimirPila(){
         if (esVacia()){
         System.out.println("La pila esta vacia");
@@ -76,6 +95,7 @@ public DatosCastigos despilar(){
         
         }
     }
+    
         public String sacarCastigo() {
         if (top == null) {
             return "No hay mas premios disponibles."; 

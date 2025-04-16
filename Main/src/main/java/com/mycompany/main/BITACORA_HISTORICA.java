@@ -36,7 +36,13 @@ public class BITACORA_HISTORICA {
     public NodoCola getUltimo() {
         return ultimo;
     }
-    
+    /**
+   * Con este Metodo agregamos el nombre y las posiciones en la que a estado el jugador
+   * @author Ian Villalobos Alvarez                   
+   * @param nombre agregamos el nombre del jugador 
+   * @param Lista agregamos la lista de posiciones transcuridas dentro del juego
+   * @return No retorna nada
+   */
     public void insertar (String nombre, ListaEnlazada Lista){
 
         DatosJugadores miDato = new DatosJugadores(nombre, Lista);
@@ -74,6 +80,12 @@ public class BITACORA_HISTORICA {
             temp.getSiguiente().setAnterior(temp);    
         }
     }
+    /**
+   * Con este Metodo sacamos el historial del jugador que se fue del juego
+   * @author Ian Villalobos Alvarez                   
+   * @param nombre Agregamos el nombre del jugador a eliminar.
+   * @return No retorna nada
+   */
     public NodoCola desencolar(String nombre) {
         if (this.frente == null) {
             return null; // La lista está vacía.
@@ -122,7 +134,11 @@ public class BITACORA_HISTORICA {
 
         return null; // Si no se encontró el nodo con el nombre especificado
     }
-    
+    /**
+   * Con este Metodo imprimimos todos los jugadores como su historial de juego respectivo
+   * @author Ian Villalobos Alvarez                   
+   * @return No retorna nada
+   */
     public void imprimir() {
         if (this.frente == null) {
             System.out.println("La lista está vacía.");
@@ -146,6 +162,5 @@ public class BITACORA_HISTORICA {
             actual = actual.getSiguiente();
         }
     }
-    /** hola como estamos**/
 
 }

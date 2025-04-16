@@ -12,6 +12,7 @@ public class DatosJugadores {
     private String NombreJugador;
     private int PosicionActual;
     private ListaEnlazada Posicion;
+    private int tamañolaberinto;
     
     public DatosJugadores(String NombreJugador, int PosicionActual){
     this.NombreJugador = NombreJugador;
@@ -22,6 +23,9 @@ public class DatosJugadores {
     public DatosJugadores(String NombreJugador, ListaEnlazada Posicion) {
         this.Posicion = Posicion;
         this.NombreJugador = NombreJugador;
+    }
+    public DatosJugadores(int tamañolaberinto) {
+        this.tamañolaberinto = 30;
     }
     
     
@@ -48,6 +52,14 @@ public class DatosJugadores {
 
     public void setPosicion(ListaEnlazada Posicion) {
         this.Posicion = Posicion;
+    }
+
+    public int getTamañolaberinto() {
+        return tamañolaberinto;
+    }
+
+    public void setTamañolaberinto(int tamañolaberinto) {
+        this.tamañolaberinto = tamañolaberinto;
     }
     
 

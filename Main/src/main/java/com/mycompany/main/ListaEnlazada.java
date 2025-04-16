@@ -22,7 +22,12 @@ public class ListaEnlazada {
     public void setPrimero(Nodo primero) {
         this.primero = primero;
     }
-    
+    /**
+   * Con este Metodo metemos a la lista las posiuciones en las que el jugador jugo 
+   * @author Ian Villalobos Alvarez                   
+   * @param valor agregamos a la lista las posiciones que jugo el jugador
+   * @return No retorna nada
+   */
     public void insertaOrdenado(int valor){
     Nodo nuevo = new Nodo(valor);
     // #1caso: Insertar en una lista  vacia.
@@ -49,7 +54,12 @@ public class ListaEnlazada {
         aux.setSiguiente(nuevo);
         }
     }
-    
+   /**
+   * Con este Metodo eliminamos la lista del jugador
+   * @author Ian Villalobos Alvarez                   
+   * @param valor eliminamos a la lista las posiciones que jugo el jugador
+   * @return No retorna nada
+   */
     public void eliminarNodo(int valor) {
     Nodo actual = primero;  // Creo un auxiliar temporal y lo igualo al primero.
     Nodo anterior = null;   // Inicializo el anterior al primero en null.
@@ -72,7 +82,12 @@ public class ListaEnlazada {
         }
     }
 
-    
+    /**
+   * Con este Metodo clasificamos a los niños por edad a diferentes pilas
+   * @author Ian Villalobos Alvarez                   
+   * @param valor busca el valor en la lista 
+   * @return No retorna nada
+   */
     public boolean buscar(int valor) {
         Nodo actual = primero;  // Creo un puntero auxiliar y lo inicializo igual al primero.
         while (actual != null) {  // Mientras actual NO sea null. Tenemos elementos en la lista.
@@ -83,7 +98,11 @@ public class ListaEnlazada {
         }
         return false;  // Retorna false porque llegó al final de la lista y nunca encontró el elemento que andaba buscando.
     }
-
+    /**
+   * Con este Metodo recorre la lista
+   * @author Ian Villalobos Alvarez                   
+   * @return No retorna nada
+   */
     public void recorrer() {
         Nodo actual = primero;  // Creo un puntero auxiliar y lo inicializo igual al primero.
         while (actual != null) {  // Mientras actual NO sea null. Tenemos elementos en la lista.

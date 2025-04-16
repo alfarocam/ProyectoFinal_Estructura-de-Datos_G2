@@ -17,12 +17,11 @@ public class ColaDeJugadores extends Cola{
 
     public ColaDeJugadores(){
 
-        
     }
-/**
-   * En este Metodo contamos cuantos niños ahi inscritos en la cola 
+    /**
+   * En este Metodo contamos a los jugadores que se encuentran en  la cola 
    * @author Ian Villalobos Alvarez                    
-   * @return Retorna contador que es la cantidad de niños inscritos
+   * @return Retorna contador que es la cantidad de jugadores
    */    
     public int cuentaParticipantes(){
         int contador = 0;
@@ -35,14 +34,25 @@ public class ColaDeJugadores extends Cola{
     return contador;
       
     }
-/**
+    public static double convertirAPorcentaje(int numero, int TamañoLaberinto) {
+        
+        if (numero >= 0 && numero <= TamañoLaberinto) {
+            
+            double porcentaje = ((double) numero / TamañoLaberinto) * 100;
+            return porcentaje; 
+        } else {
+                 int resta =  numero - TamañoLaberinto; 
+                    double porcentaje = ((double)(numero - 1) / (TamañoLaberinto - 1)) * 100;
+                    return porcentaje;
+            }
+        }    
+    /**
    * En este Metodo imprimimos los datos de los niños inscritos 
    * @author Ian Villalobos Alvarez                    
    * @return No retorna nada
    */
-    public void ImprimirParticipantes() {
+    public void ImprimirParticipantes(String nombre, int tamañodelLaberinto) {
         NodoCola actual = frente;  
-    
     if (actual == null) {  
         System.out.println("La cola está vacía.");
     } 
@@ -52,8 +62,22 @@ public class ColaDeJugadores extends Cola{
             System.out.println("#### Participante ####");
             System.out.println("Nombre Completo: " + actual.getDato().getNombreJugador());
             System.out.println("Posicion: " + actual.getDato().getPosicionActual());
-            System.out.println("---------------------");
-    
+            double PorsentajeJ = (double) convertirAPorcentaje(actual.getDato().getPosicionActual(),tamañodelLaberinto);
+            if (PorsentajeJ <= 40){
+                System.out.println("Porcentaje: verde " + convertirAPorcentaje(actual.getDato().getPosicionActual(),tamañodelLaberinto) + "%");
+                System.out.println("de:" + tamañodelLaberinto);
+                System.out.println("---------------------");
+            }
+            if (PorsentajeJ >= 41 && PorsentajeJ <= 80){
+                System.out.println("Porcentaje: amarillo " + convertirAPorcentaje(actual.getDato().getPosicionActual(),tamañodelLaberinto) + "%");
+                System.out.println("de:" + tamañodelLaberinto);
+                System.out.println("---------------------");
+            }
+            if (PorsentajeJ >= 81 && PorsentajeJ <= 100){
+                System.out.println("Porcentaje: rojo " + convertirAPorcentaje(actual.getDato().getPosicionActual(),tamañodelLaberinto) + "%");
+                System.out.println("de:" + tamañodelLaberinto);
+                System.out.println("---------------------");
+            }
             actual = actual.getSiguiente();
             }
         }

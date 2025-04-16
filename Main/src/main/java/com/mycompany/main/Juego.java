@@ -4,32 +4,33 @@
  */
 package com.mycompany.main;
 
-import java.util.Scanner;
 import java.util.Random;
+import java.util.Scanner;
 
-/**
- *
- * @author josep
- * @author Kevin 3/1/2025
- * @author CamilaAlfaro 3/2/2025
- */
 public class Juego {
     private ColaDeJugadores ColaDeJugadores;
+    private Chatbot Chatbot;
     private BITACORA_HISTORICA BITACORA_HISTORICA;
     private Premios Premios;
     private Castigos Castigos;
     private Random random; 
-    private int Jugador;
-    private char permitirIngreso; // 'S' para si, 'N' para no 
+    private int Jugador; 
+    private int cantidadDeJugadores;
+    private String SiSePuede;
+    private int TamañoLaberinto;
+    
     
     public Juego() {
         ColaDeJugadores = new ColaDeJugadores();
+        Chatbot = new Chatbot();
         BITACORA_HISTORICA = new BITACORA_HISTORICA();
         Premios = new Premios();
         Castigos = new Castigos();
         random = new Random();
         this.Jugador = 0;
-        
+        this.cantidadDeJugadores = 4;
+        this.SiSePuede = "S";
+        this.TamañoLaberinto = 30;
     }
 
     public int getJugador() {
@@ -40,10 +41,33 @@ public class Juego {
         this.Jugador = Jugador;
     }
 
+    public int getCantidadDeJugadores() {
+        return cantidadDeJugadores;
+    }
+
+    public void setCantidadDeJugadores(int cantidadDeJugadores) {
+        this.cantidadDeJugadores = cantidadDeJugadores;
+    }
+
+    public int getTamañoLaberinto() {
+        return TamañoLaberinto;
+    }
+
+    public void setTamañoLaberinto(int TamañoLaberinto) {
+        this.TamañoLaberinto = TamañoLaberinto;
+    }
+    
+    /**
+   * Con este Metodo hacemos el que el juego hinicie el menu
+   * @author Ian Villalobos Alvarez                   
+   * @return No retorna nada
+   */
     public void iniciarJuego() {
-        
+        Chatbot chat = new Chatbot();
+
         Premios.agregaPremio();
         Castigos.agregarCastigo();
+        Chatbot.agregarChatbot();
         Scanner scanner = new Scanner(System.in);
         System.out.println("*****************************************************");
         System.out.println("*                                                   *");
@@ -54,57 +78,82 @@ public class Juego {
         System.out.println("*                   Buena Suerte                    *");
         System.out.println("*                                                   *");
         System.out.println("*****************************************************");
-        System.out.println();
-        System.out.println("Desea permitir ingreso de mas jugadores durante el juego? (S/N):  ");
-        permitirIngreso = scanner.next().toUpperCase().charAt(0); // Guardar el valor
         boolean jugando = true;
 
         while (jugando) {
             System.out.println("\nSeleccione una opcion:");
             System.out.println("1. Agregar jugador");
-            System.out.println("2. Eliminar jugador");
-            System.out.println("3. Mostrar jugadores");
-            System.out.println("4. Jugar");
-            System.out.println("5. Salirse del juego");
-            System.out.println("6. Mostrar posiciones");
-            System.out.println("7. Cambiar turno"); 
-            System.out.println("8. Mostrar Pila de Premios");
-            System.out.println("9. Mostrar Pila de Castigos");
-            System.out.println("10. Ayuda");
-            System.out.println("11. Salir");
+            System.out.println("2. Opsiones del juego");
+            System.out.println("3. Eliminar jugador");
+            System.out.println("4. Mostrar jugadores");
+            System.out.println("5. Jugar");
+            System.out.println("6. Salirse del juego");
+            System.out.println("7. Mostrar posiciones");
+            System.out.println("8. Cambiar turno"); 
+            System.out.println("9. Mostrar Pila de Premios");
+            System.out.println("10. Mostrar Pila de Castigos");
+            System.out.println("11. Agregar premios, castigos");
+            System.out.println("12. Ayuda");
+            System.out.println("13. Chatbot");
+            System.out.println("14. Salir");
             int opcion = scanner.nextInt();
 
             switch (opcion) {
                 case 1:
-                System.out.print("Ingrese el nombre del jugador: ");
-                String nombre = scanner.next();
+                    boolean agregarmas = true;
+                    while(agregarmas){
+                    System.out.print("Ingrese el nombre del jugador: ");
+                    String nombre = scanner.next();
+                    if(ColaDeJugadores.cuentaParticipantes() < cantidadDeJugadores){
+                        NodoCola actual = ColaDeJugadores.getFrente();
+                        boolean existe = false; 
 
-                NodoCola actual = ColaDeJugadores.getFrente();
-                boolean existe = false; 
 
-              
-                while (actual != null) {
-                    if (actual.getDato().getNombreJugador().equals(nombre)) {
-                        System.out.println("El jugador ya existe");
-                        existe = true;
-                        break; 
+                        while (actual != null) {
+                            if (actual.getDato().getNombreJugador().equals(nombre)) {
+                                System.out.println("El jugador ya existe");
+                                existe = true;
+                                break; 
+                            }
+                            actual = actual.getSiguiente();
+                        }
+
+                        if (existe) {
+                            System.out.println("Este jugador ya existe.");
+                        } else {
+                            ListaEnlazada miListaEnlazada = new ListaEnlazada();
+
+                            ColaDeJugadores.encolar(nombre, Jugador);
+                            miListaEnlazada.insertaOrdenado(Jugador);
+                            BITACORA_HISTORICA.insertar(nombre, miListaEnlazada);
+                            BITACORA_HISTORICA.getUltimo().getAnterior().getDato().getPosicion().recorrer();    
+                        }   
                     }
-                    actual = actual.getSiguiente();
-                }
+                    else{
+                        System.out.println("Ya se encuentran 4 jugadores, no se pueden agregar más!!");
+                    }
+                    System.out.print("Desea agregar otro usuario? (S/N): ");
+                    String agregar = scanner.next();
+                    if (agregar.equals("S")){
 
-                if (existe) {
-                    System.out.println("Este jugador ya existe.");
-                } else {
-                    ListaEnlazada miListaEnlazada = new ListaEnlazada();
-                    
-                    ColaDeJugadores.encolar(nombre, Jugador);
-                    miListaEnlazada.insertaOrdenado(Jugador);
-                    BITACORA_HISTORICA.insertar(nombre, miListaEnlazada);
-                    BITACORA_HISTORICA.getUltimo().getAnterior().getDato().getPosicion().recorrer();    
-                    
-                }
-                break; 
+
+                    }
+                    else {
+                    agregarmas = false;
+                    }
+                    }
+
+                    break; 
                 case 2:
+                    System.out.print("Ingrese el tamaño del laberinto: ");
+                    TamañoLaberinto = scanner.nextInt();
+                    System.out.print("Ingrese la cantidad de jugadores que pueden jugar: ");
+                    cantidadDeJugadores = scanner.nextInt();
+                    System.out.print("Se podra agregar mas jugadores despues de iniciar el juego? (S/N): ");
+                    SiSePuede = scanner.next();
+                    
+                    break;
+                case 3:
                     System.out.print("Ingrese el nombre del jugador: ");  
                     String eliminado = scanner.next();
                         boolean existente = false; 
@@ -128,38 +177,71 @@ public class Juego {
  
                         }
                 break;
-                case 3:
-                    ColaDeJugadores.ImprimirParticipantes();
-                    break;
                 case 4:
-                    jugar();
+                    ColaDeJugadores.ImprimirParticipantes("n",TamañoLaberinto);
                     break;
                 case 5:
+                    jugar();
+                    break;
+                case 6:
                     System.out.print("Ingrese el ID del jugador que desea salir: ");
                     int idSalir = scanner.nextInt();
                     /**colaDeJugadores.salirDelJuego(idSalir);**/
                     break;
-                case 6:
+                case 7:
                     ColaDeJugadores.mostrarPosiciones(); 
                     break;
-                case 7:
+                case 8:
                     /**colaDeJugadores.cambiarTurno(); **/
                     break;
-                case 8:
+                case 9:
                     Premios.imprimirPila(); 
                     break;
-                case 9: 
+                case 10: 
                     Castigos.imprimirPila();
                     break;
-                case 10:
-                    mostrarAyuda();
-                    break;
+                    
                 case 11:
-                    jugando = false;
-                    System.out.println("Gracias por jugar!");
+                    System.out.print("que desea agregar?:");
+                    String editar = scanner.next();
+                    if(editar.equals("Premio")){
+                        
+                        System.out.print("Posicion de premio:");
+                        String Premio = scanner.next();
+                        System.out.print("descripcion del premio:");
+                        String descripcion = scanner.next();
+                        System.out.print("cantidad de posiciones que tendra el premio: ");
+                        int cantidad = scanner.nextInt();
+                        Premios.apilar(Premio, descripcion, cantidad);
+                    }
+                    if(editar.equals("Castigo")){
+                        System.out.print("Posicion de castigo:");
+                        String Castigo = scanner.next();
+                        System.out.print("descripcion del castigo:");
+                        String descripcion = scanner.next();
+                        System.out.print("cantidad de posiciones que tendra el castigo: ");
+                        int cantidad = scanner.nextInt();
+                        Castigos.apilar(Castigo, descripcion, cantidad);
+
+                    }
+                    else{
+                    break;
+                    }
                     break;
                 case 12:
-                    System.out.println(Premios.sacarPremio());
+                    mostrarAyuda();
+                    break;
+                case 13:
+                    Chatbot.postOrden();
+                    Chatbot.inOrden();
+                    Chatbot.preOrden();
+                    Chatbot.inOrden();
+                    break;
+                            
+                case 14:
+                    jugando = false;
+                    System.out.println("Gracias por jugar!");
+
                 default:
                     System.out.println("Opcion no valida");
             }
@@ -167,9 +249,11 @@ public class Juego {
 
         scanner.close();
     }
-/**
-* imprime la informacio de ayuda del juego, la versión y los desarrolladores.
-*/
+    /**
+   * Con este Metodo mostramos la opcion ayuda
+   * @author Ian Villalobos Alvarez                   
+   * @return No retorna nada
+   */
     private void mostrarAyuda() {
         System.out.println("*****************************************************");
         System.out.println("*                   Ayuda del Juego                 *");
@@ -196,16 +280,23 @@ public class Juego {
  *
 * */
 
-        
+    /**
+   * Con este Metodo iniciamos el juego 
+   * @author Ian Villalobos Alvarez                   
+   * @return No retorna nada
+   */        
 private void jugar() {
     Scanner scanner = new Scanner(System.in);
     
         System.out.println("!!!!!Inicia el Juego!!!!!!!");
+        System.out.println("                            ");
+        System.out.println("El primer jugador en llegar a " + TamañoLaberinto + " es el gadador");
+        System.out.println("                            ");
         System.out.println("Participantes");
-        ColaDeJugadores.ImprimirParticipantes();
+        ColaDeJugadores.ImprimirParticipantes("n",TamañoLaberinto);
         boolean juegoActivo = true;
 
-        while (ColaDeJugadores.getFrente().getDato().getPosicionActual() < 30 && juegoActivo) {  // Cambié la condición para continuar hasta alcanzar o superar la posición 30
+        while (ColaDeJugadores.getFrente().getDato().getPosicionActual() < TamañoLaberinto && juegoActivo) {  // Cambié la condición para continuar hasta alcanzar o superar la posición 30
             String Menu = "pe";
             DatosJugadores JugadorActual = ColaDeJugadores.getFrente().getDato();  
             String Turno = BITACORA_HISTORICA.getCabeza().getDato().getNombreJugador();
@@ -284,7 +375,6 @@ private void jugar() {
                 System.out.println("6. Mostrar Premios restantes");
                 System.out.println("7. Mostrar Castigos restantes");
                 System.out.println("8. Terminar Juego");
-                System.out.println("9. Agregar nuevo jugador durante el juego");
                 int opcion = scanner.nextInt();
 
                 switch (opcion) {
@@ -300,14 +390,16 @@ private void jugar() {
                         Menu = "pp";
                         break;
                     case 2:
+                        
                         boolean jugador = true;
                         NodoCola historialActual = BITACORA_HISTORICA.getCabeza(); 
 
                         while (jugador) {
                             System.out.println(historialActual.getDato().getNombreJugador());
                             historialActual.getDato().getPosicion().recorrer();
-
-                            System.out.print("Exit, siguiente <> anterior: ");
+                            System.out.print("Escriba Exit si decea salir");
+                            System.out.print("Recorrer jugadores");    
+                            System.out.print(" siguiente <> anterior: ");
                             String opciones = scanner.next();
 
                             if (opciones.equals("siguiente")) {
@@ -318,18 +410,22 @@ private void jugar() {
                                 break;
                             }
                         }
-    
+                        break;
                                 
                     case 3:
-                         System.out.print("Ingrese el nombre del jugador: ");
+                        boolean agregarmas = true;
+                        if (SiSePuede.equals("S")){
+                        while(agregarmas){
+                        System.out.print("Ingrese el nombre del jugador: ");
                         String nombre = scanner.next();
+                        if(ColaDeJugadores.cuentaParticipantes() < cantidadDeJugadores){
+
 
                         boolean existe = false; 
 
 
                             while (actual != null) {
                                 if (actual.getDato().getNombreJugador().equals(nombre)) {
-                                    System.out.println("El jugador ya existe");
                                     existe = true;
                                     break; 
                                 }
@@ -340,17 +436,32 @@ private void jugar() {
                             System.out.println("Este jugador ya existe.");
                         } else {
                             ListaEnlazada miListaEnlazada = new ListaEnlazada();
-
                             ColaDeJugadores.encolar(nombre, Jugador);
                             miListaEnlazada.insertaOrdenado(Jugador);
                             BITACORA_HISTORICA.insertar(nombre, miListaEnlazada);
                             BITACORA_HISTORICA.getUltimo().getAnterior().getDato().getPosicion().recorrer();    
 
-                            }  
-                        
-                        break;                   
+                            }
+                        }
+                        else{
+                            System.out.println("Ya se encuentran 4 jugadores, no se pueden agregar más!!");
+                        }
+                        System.out.print("Desea agregar otro usuario? (S/N): ");
+                        String agregar = scanner.next();
+                        if (agregar.equals("S")){
+                        }
+                        else {
+                        agregarmas = false;
+                        }
+                        }
+                        }
+                        else{
+                            System.out.println("¡ERROR! La configuración de este juego no permite ingresar más jugadores, deberá esperar a que inicie uno nuevo.");
+                        }
+                        break;                  
                     case 4:
-                        ColaDeJugadores.ImprimirParticipantes();  
+                        ColaDeJugadores.ImprimirParticipantes("n",TamañoLaberinto);
+                        
                         
                         break;
                     case 5:
@@ -378,7 +489,7 @@ private void jugar() {
                         break; 
                     case 8:
                         System.out.println("Juego finalizado, los jugadores quedaron:");
-                        ColaDeJugadores.ImprimirParticipantes();
+                        ColaDeJugadores.ImprimirParticipantes("n",TamañoLaberinto);
 
                          while (actual != null) {
                              actual.getDato().setPosicionActual(0);
@@ -387,37 +498,11 @@ private void jugar() {
                          juegoActivo = false; 
                          Menu = "pp";  // O cualquier otro valor según tu lógica
                          break;
-                    /**
-                    * Agrega un nuevo jugador a la cola durante el juego, si la configuración lo permite.
-                    * Verifica que el jugador no exista previamente en la cola.
-                    * Inserta su historial inicial en la bitácora histórica.
-                    * Si no se permite el ingreso de nuevos jugadores, muestra un mensaje de error.
-                    * 
-                    * @author Kevin
-                    */     
-                    case 9:
-                        if (permitirIngreso == 'S') {
-                        System.out.print("Ingrese el nombre del nuevo jugador: ");
-                        String nuevoJugador = scanner.next();
-
-                        if (ColaDeJugadores.buscarJugador(nuevoJugador) != null) {
-                            System.out.println("El jugador ya existe.");
-                        } else {
-                            ListaEnlazada miListaEnlazada = new ListaEnlazada();
-                            ColaDeJugadores.encolar(nuevoJugador, 0);
-                            miListaEnlazada.insertaOrdenado(0);
-                            BITACORA_HISTORICA.insertar(nuevoJugador, miListaEnlazada);
-                            System.out.println("Jugador agregado exitosamente.");
-                        }
-                    } else {
-                        System.out.println("¡ERROR! La configuración de este juego no permite ingresar más jugadores, deberá esperar a que inicie uno nuevo.");
-                    }
-                    break;
                 }
             }
         }
     }
-    if(ColaDeJugadores.getFrente().getDato().getPosicionActual() >= 30){    
+    if(ColaDeJugadores.getFrente().getDato().getPosicionActual() >= TamañoLaberinto){    
     System.out.println("¡El juego ha terminado! El jugador " + ColaDeJugadores.getFrente().getDato().getNombreJugador() + " ha ganado.");
     }
     else{
@@ -425,5 +510,3 @@ private void jugar() {
     }
     }
 }  
-    
-   
